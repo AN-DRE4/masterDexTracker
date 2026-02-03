@@ -7,26 +7,41 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(10, 3rem);
+  grid-template-columns: repeat(13, 4rem);
   gap: 2px;
   width: fit-content; }
   .grid__square {
-    width: 3rem;
-    height: 3rem;
-    background: #e0e0e0;
+    width: 4rem;
+    height: 4rem;
+    background: #e8e8e8;
     border: 1px solid #999;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 600; }
+    position: relative;
+    overflow: hidden; }
     .grid__square:hover {
-      background: #d0d0d0; }
-    .grid__square.grid__square--selected {
-      border-width: 2px;
-      border-color: #333;
-      background: #fff9e6; }
+      background: #ddd; }
+  .grid__sprite {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none; }
+  .grid__badges {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: #333;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 0 3px;
+    border-radius: 2px;
+    min-width: 0;
+    opacity: 0; }
+    .grid__badges.grid__badges--on {
+      opacity: 1; }
 
 .modal {
   position: fixed;
@@ -62,15 +77,28 @@
     flex-direction: column;
     gap: 0.5rem;
     margin-bottom: 1rem; }
-  .modal__option {
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
+  .modal__checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     cursor: pointer;
-    background: #f0f0f0;
-    border: 1px solid #ccc;
+    font-size: 1rem; }
+    .modal__checkbox input {
+      width: 1.1rem;
+      height: 1.1rem; }
+  .modal__actions {
+    display: flex;
+    gap: 0.5rem; }
+  .modal__save {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    background: #333;
+    color: #fff;
+    border: none;
     border-radius: 4px; }
-    .modal__option:hover {
-      background: #e0e0e0; }
+    .modal__save:hover {
+      background: #555; }
   .modal__cancel {
     padding: 0.35rem 0.75rem;
     font-size: 0.875rem;

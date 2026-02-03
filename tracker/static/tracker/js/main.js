@@ -3,25 +3,44 @@
   const csrfToken = window.__CSRF_TOKEN__;
   const grid = document.getElementById('grid');
   const modal = document.getElementById('modal');
+  const modalTitle = document.getElementById('modal-title');
   const modalBackdrop = document.getElementById('modal-backdrop');
   const modalCancel = document.getElementById('modal-cancel');
-  const optionButtons = document.querySelectorAll('.modal__option');
+  const modalSave = document.getElementById('modal-save');
+  const opt1 = document.getElementById('opt1');
+  const opt2 = document.getElementById('opt2');
+  const opt3 = document.getElementById('opt3');
 
   let currentSquareId = null;
 
   function getSquareEl(squareId) {
-    return document.querySelector(`[data-square-id="${squareId}"]`);
+    return document.querySelector('[data-square-id="' + squareId + '"]');
   }
 
-  function applyChoiceToSquare(squareId, option) {
-    const el = getSquareEl(squareId);
-    if (!el) return;
-    el.classList.add('grid__square--selected');
-    el.textContent = option;
+  function getBadgesEl(squareId) {
+    return document.getElementById('badges-' + squareId);
+  }
+
+  function updateBadges(squareId) {
+    const c = choices[squareId];
+    const badgesEl = getBadgesEl(squareId);
+    if (!badgesEl) return;
+    const active = [];
+    if (c && c.option_1) active.push(1);
+    if (c && c.option_2) active.push(2);
+    if (c && c.option_3) active.push(3);
+    badgesEl.textContent = active.length ? active.join(' ') : '';
+    badgesEl.classList.toggle('grid__badges--on', active.length > 0);
   }
 
   function openModal(squareId) {
     currentSquareId = squareId;
+    const square = getSquareEl(squareId);
+    modalTitle.textContent = square ? square.getAttribute('title') + ' – Choose options' : 'Choose options';
+    const c = choices[squareId] || {};
+    opt1.checked = !!c.option_1;
+    opt2.checked = !!c.option_2;
+    opt3.checked = !!c.option_3;
     modal.setAttribute('aria-hidden', 'false');
   }
 
@@ -30,14 +49,21 @@
     currentSquareId = null;
   }
 
-  function saveChoice(squareId, option) {
+  function saveChoice() {
+    if (currentSquareId === null) return;
+    const payload = {
+      square_id: currentSquareId,
+      option_1: opt1.checked,
+      option_2: opt2.checked,
+      option_3: opt3.checked,
+    };
     fetch('/api/choice/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-CSRFToken': csrfToken,
       },
-      body: JSON.stringify({ square_id: squareId, option: option }),
+      body: JSON.stringify(payload),
     })
       .then(function (res) {
         return res.json().then(function (data) {
@@ -46,8 +72,12 @@
         });
       })
       .then(function () {
-        choices[squareId] = option;
-        applyChoiceToSquare(squareId, option);
+        choices[currentSquareId] = {
+          option_1: payload.option_1,
+          option_2: payload.option_2,
+          option_3: payload.option_3,
+        };
+        updateBadges(currentSquareId);
         closeModal();
       })
       .catch(function (err) {
@@ -65,16 +95,9 @@
 
   modalBackdrop.addEventListener('click', closeModal);
   modalCancel.addEventListener('click', closeModal);
-
-  optionButtons.forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      if (currentSquareId === null) return;
-      const option = parseInt(btn.dataset.option, 10);
-      saveChoice(currentSquareId, option);
-    });
-  });
+  modalSave.addEventListener('click', saveChoice);
 
   Object.keys(choices).forEach(function (squareId) {
-    applyChoiceToSquare(parseInt(squareId, 10), choices[squareId]);
+    updateBadges(parseInt(squareId, 10));
   });
 })();

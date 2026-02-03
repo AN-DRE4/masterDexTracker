@@ -13,8 +13,11 @@
     <main class="page">
         <h1 class="page__title">Collection Grid</h1>
         <div class="grid" id="grid">
-            {% for square_id in grid_squares %}
-                <div class="grid__square" data-square-id="{{ square_id }}" role="button" tabindex="0"></div>
+            {% for p in pokemon_list %}
+                <div class="grid__square" data-square-id="{{ p.dex }}" role="button" tabindex="0" title="{{ p.name }}">
+                    <img class="grid__sprite" src="{{ p.sprite_url }}" alt="{{ p.name }}" loading="lazy">
+                    <span class="grid__badges" id="badges-{{ p.dex }}" aria-hidden="true"></span>
+                </div>
             {% endfor %}
         </div>
     </main>
@@ -22,21 +25,31 @@
     <div class="modal" id="modal" aria-hidden="true">
         <div class="modal__backdrop" id="modal-backdrop"></div>
         <div class="modal__content">
-            <h2 class="modal__title">Choose an option</h2>
+            <h2 class="modal__title" id="modal-title">Choose options</h2>
             <div class="modal__options">
-                <button type="button" class="modal__option" data-option="1">Option 1</button>
-                <button type="button" class="modal__option" data-option="2">Option 2</button>
-                <button type="button" class="modal__option" data-option="3">Option 3</button>
+                <label class="modal__checkbox">
+                    <input type="checkbox" id="opt1" name="option_1" value="1">
+                    Option 1
+                </label>
+                <label class="modal__checkbox">
+                    <input type="checkbox" id="opt2" name="option_2" value="1">
+                    Option 2
+                </label>
+                <label class="modal__checkbox">
+                    <input type="checkbox" id="opt3" name="option_3" value="1">
+                    Option 3
+                </label>
             </div>
-            <button type="button" class="modal__cancel" id="modal-cancel">Cancel</button>
+            <div class="modal__actions">
+                <button type="button" class="modal__save" id="modal-save">Save</button>
+                <button type="button" class="modal__cancel" id="modal-cancel">Cancel</button>
+            </div>
         </div>
     </div>
 
     <script>
         window.__INITIAL_CHOICES__ = {{ choices_json|safe }};
         window.__CSRF_TOKEN__ = document.querySelector('[name=csrfmiddlewaretoken]').value;
-        window.__GRID_ROWS__ = {{ rows }};
-        window.__GRID_COLS__ = {{ cols }};
     </script>
     <script src="{% static 'tracker/js/main.js' %}"></script>
 </body>
