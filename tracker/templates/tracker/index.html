@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon Tracker</title>
+    {% load sass_tags %}
+    {% load static %}
+    <link href="{% sass_src 'tracker/scss/main.scss' %}" rel="stylesheet">
+    {% csrf_token %}
+</head>
+<body>
+    <main class="page">
+        <h1 class="page__title">Collection Grid</h1>
+        <div class="grid" id="grid">
+            {% for square_id in grid_squares %}
+                <div class="grid__square" data-square-id="{{ square_id }}" role="button" tabindex="0"></div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <div class="modal" id="modal" aria-hidden="true">
+        <div class="modal__backdrop" id="modal-backdrop"></div>
+        <div class="modal__content">
+            <h2 class="modal__title">Choose an option</h2>
+            <div class="modal__options">
+                <button type="button" class="modal__option" data-option="1">Option 1</button>
+                <button type="button" class="modal__option" data-option="2">Option 2</button>
+                <button type="button" class="modal__option" data-option="3">Option 3</button>
+            </div>
+            <button type="button" class="modal__cancel" id="modal-cancel">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        window.__INITIAL_CHOICES__ = {{ choices_json|safe }};
+        window.__CSRF_TOKEN__ = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        window.__GRID_ROWS__ = {{ rows }};
+        window.__GRID_COLS__ = {{ cols }};
+    </script>
+    <script src="{% static 'tracker/js/main.js' %}"></script>
+</body>
+</html>
