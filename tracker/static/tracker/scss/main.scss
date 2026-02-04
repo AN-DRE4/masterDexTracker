@@ -1,4 +1,5 @@
-$grid-cols: 13;
+$grid-cols: 6;
+$grid-rows: 5;
 $square-size: 8rem;
 $modal-z: 1000;
 
@@ -96,9 +97,13 @@ body {
 
 .grid {
   display: grid;
-  grid-template-columns: repeat($grid-cols, $square-size);
   gap: 2px;
   width: fit-content;
+
+  &.grid--6x5 {
+    grid-template-columns: repeat($grid-cols, $square-size);
+    grid-template-rows: repeat($grid-rows, $square-size);
+  }
 
   &__square {
     width: $square-size;
@@ -144,6 +149,40 @@ body {
     &.grid__badges--on {
       opacity: 1;
     }
+  }
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+
+  &__prev,
+  &__next {
+    padding: 0.5rem 1rem;
+    font-size: 1.125rem;
+    cursor: pointer;
+    background: #333;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+
+    &:hover:not(:disabled) {
+      background: #555;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &__info {
+    font-size: 1.125rem;
+    color: #333;
   }
 }
 

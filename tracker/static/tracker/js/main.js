@@ -7,6 +7,12 @@
   const searchInput = document.getElementById('search-input');
   const searchCount = document.getElementById('search-count');
   const generationSelect = document.getElementById('generation-select');
+  const paginationPrev = document.getElementById('pagination-prev');
+  const paginationNext = document.getElementById('pagination-next');
+  const paginationInfo = document.getElementById('pagination-info');
+
+  const PER_PAGE = 30;
+  let currentPage = 0;
   const modal = document.getElementById('modal');
   const modalTitle = document.getElementById('modal-title');
   const modalBackdrop = document.getElementById('modal-backdrop');
@@ -316,8 +322,7 @@
     return matchDex;
   }
 
-  function applyFilters() {
-    if (!grid) return;
+  function getFilteredList() {
     var selectedGen = getSelectedGeneration();
     var q = (searchInput && searchInput.value) ? searchInput.value.trim() : '';
     var matchDex = {};
@@ -328,26 +333,69 @@
         matchDex = getMatchingDexFromIncludes(q);
       }
     }
-    var squares = grid.querySelectorAll('.grid__square');
-    var visible = 0;
-    for (var i = 0; i < squares.length; i++) {
-      var el = squares[i];
-      var gen = parseInt(el.getAttribute('data-generation'), 10) || 1;
-      var dex = parseInt(el.dataset.squareId, 10);
-      var name = el.getAttribute('data-name') || '';
+    var out = [];
+    for (var i = 0; i < pokemonList.length; i++) {
+      var p = pokemonList[i];
+      var gen = p.generation || 1;
       var genMatch = selectedGen === null || gen === selectedGen;
-      var searchMatch = !q || !!matchDex[dex] || nameMatchesQuery(name, q);
-      var show = genMatch && searchMatch;
-      el.classList.toggle('grid__square--hidden', !show);
-      if (show) visible++;
+      var searchMatch = !q || !!matchDex[p.dex] || nameMatchesQuery(p.name, q);
+      if (genMatch && searchMatch) out.push(p);
     }
+    return out;
+  }
+
+  function renderGrid() {
+    if (!grid) return;
+    var filtered = getFilteredList();
+    var totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
+    currentPage = Math.max(0, Math.min(currentPage, totalPages - 1));
+    var start = currentPage * PER_PAGE;
+    var slice = filtered.slice(start, start + PER_PAGE);
+
+    grid.innerHTML = '';
+    for (var i = 0; i < slice.length; i++) {
+      var p = slice[i];
+      var square = document.createElement('div');
+      square.className = 'grid__square';
+      square.setAttribute('data-square-id', p.dex);
+      square.setAttribute('data-generation', p.generation);
+      square.setAttribute('data-name', p.name);
+      square.setAttribute('role', 'button');
+      square.setAttribute('tabindex', '0');
+      square.setAttribute('title', p.name);
+      var img = document.createElement('img');
+      img.className = 'grid__sprite';
+      img.src = p.sprite_url;
+      img.alt = p.name;
+      img.loading = 'lazy';
+      var badges = document.createElement('span');
+      badges.className = 'grid__badges';
+      badges.id = 'badges-' + p.dex;
+      badges.setAttribute('aria-hidden', 'true');
+      square.appendChild(img);
+      square.appendChild(badges);
+      grid.appendChild(square);
+    }
+
+    slice.forEach(function (p) { updateBadges(p.dex); });
+
+    if (paginationPrev) paginationPrev.disabled = currentPage === 0;
+    if (paginationNext) paginationNext.disabled = currentPage >= totalPages - 1;
+    if (paginationInfo) paginationInfo.textContent = 'Page ' + (currentPage + 1) + ' of ' + totalPages;
+
     if (searchCount) {
+      var q = (searchInput && searchInput.value) ? searchInput.value.trim() : '';
       if (q) {
-        searchCount.textContent = visible + ' Pokémon found';
+        searchCount.textContent = filtered.length + ' Pokémon found';
       } else {
         searchCount.textContent = '';
       }
     }
+  }
+
+  function applyFilters() {
+    currentPage = 0;
+    renderGrid();
   }
 
   if (searchInput) {
@@ -356,6 +404,25 @@
   }
   if (generationSelect) {
     generationSelect.addEventListener('change', applyFilters);
+  }
+
+  if (paginationPrev) {
+    paginationPrev.addEventListener('click', function () {
+      if (currentPage > 0) {
+        currentPage--;
+        renderGrid();
+      }
+    });
+  }
+  if (paginationNext) {
+    paginationNext.addEventListener('click', function () {
+      var filtered = getFilteredList();
+      var totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
+      if (currentPage < totalPages - 1) {
+        currentPage++;
+        renderGrid();
+      }
+    });
   }
 
   grid.addEventListener('click', function (e) {
@@ -383,11 +450,7 @@
   });
   if (modalSave) modalSave.addEventListener('click', saveChoice);
 
-  Object.keys(choices).forEach(function (squareId) {
-    updateBadges(parseInt(squareId, 10));
-  });
-
-  applyFilters();
+  renderGrid();
 
   // --- Add Pokémon modal ---
   const addModal = document.getElementById('add-modal');

@@ -29,14 +29,12 @@
             </div>
             <button type="button" class="page__add-btn" id="add-pokemon-btn" aria-label="Add new Pokémon">+ Add Pokémon</button>
         </div>
-        <div class="grid" id="grid">
-            {% for p in pokemon_list %}
-                <div class="grid__square" data-square-id="{{ p.dex }}" data-generation="{{ p.generation }}" data-name="{{ p.name }}" role="button" tabindex="0" title="{{ p.name }}">
-                    <img class="grid__sprite" src="{{ p.sprite_url }}" alt="{{ p.name }}" loading="lazy">
-                    <span class="grid__badges" id="badges-{{ p.dex }}" aria-hidden="true"></span>
-                </div>
-            {% endfor %}
-        </div>
+        <div class="grid grid--6x5" id="grid"></div>
+        <nav class="pagination" id="pagination" aria-label="Pokémon grid pages">
+            <button type="button" class="pagination__prev" id="pagination-prev" aria-label="Previous page">Previous</button>
+            <span class="pagination__info" id="pagination-info" aria-live="polite">Page 1 of 1</span>
+            <button type="button" class="pagination__next" id="pagination-next" aria-label="Next page">Next</button>
+        </nav>
     </main>
 
     <div class="modal" id="modal" aria-hidden="true">
