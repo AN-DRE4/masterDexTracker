@@ -1,18 +1,79 @@
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; }
+
 .page {
   padding: 1.5rem;
-  max-width: 100%; }
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box; }
   .page__title {
     margin: 0 0 1rem;
-    font-size: 1.5rem; }
+    font-size: 2rem;
+    text-align: center; }
+  .page__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    width: 100%;
+    max-width: 40rem; }
+  .page__search {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem; }
+  .page__search-label {
+    font-size: 1.125rem; }
+  .page__search-input {
+    padding: 0.5rem 0.875rem;
+    font-size: 1.25rem;
+    min-width: 14rem;
+    border: 1px solid #999;
+    border-radius: 4px; }
+  .page__search-count {
+    font-size: 1.125rem;
+    color: #555; }
+  .page__generation {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; }
+  .page__generation-label {
+    font-size: 0.875rem; }
+  .page__generation-select {
+    padding: 0.5rem 0.875rem;
+    font-size: 1.25rem;
+    min-width: 10rem;
+    border: 1px solid #999;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer; }
+  .page__add-btn {
+    padding: 0.5rem 1rem;
+    font-size: 1.125rem;
+    cursor: pointer;
+    background: #2d7d46;
+    color: #fff;
+    border: none;
+    border-radius: 4px; }
+    .page__add-btn:hover {
+      background: #236b3a; }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(13, 4rem);
+  grid-template-columns: repeat(13, 8rem);
   gap: 2px;
   width: fit-content; }
   .grid__square {
-    width: 4rem;
-    height: 4rem;
+    width: 8rem;
+    height: 8rem;
     background: #e8e8e8;
     border: 1px solid #999;
     cursor: pointer;
@@ -23,6 +84,8 @@
     overflow: hidden; }
     .grid__square:hover {
       background: #ddd; }
+    .grid__square.grid__square--hidden {
+      display: none; }
   .grid__sprite {
     width: 100%;
     height: 100%;
@@ -30,9 +93,9 @@
     pointer-events: none; }
   .grid__badges {
     position: absolute;
-    bottom: 2px;
-    right: 2px;
-    font-size: 0.6rem;
+    bottom: 4px;
+    right: 4px;
+    font-size: 0.875rem;
     font-weight: 700;
     color: #333;
     background: rgba(255, 255, 255, 0.9);
@@ -68,10 +131,120 @@
     padding: 1.5rem;
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    min-width: 16rem; }
+    min-width: 18rem; }
   .modal__title {
+    margin: 0 0 0.5rem;
+    font-size: 1.5rem; }
+  .modal__hint {
     margin: 0 0 1rem;
-    font-size: 1.125rem; }
+    font-size: 1.125rem;
+    color: #555; }
+  .modal__options-intro {
+    margin: 0 0 0.75rem;
+    font-size: 1.125rem;
+    color: #333; }
+  .modal__content--form {
+    min-width: 20rem;
+    max-width: 90vw; }
+  .modal__form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem; }
+  .modal__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem; }
+  .modal__label {
+    font-size: 1.125rem;
+    font-weight: 600; }
+  .modal__required {
+    color: #c00; }
+  .modal__slug-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center; }
+  .modal__slug-row input {
+    flex: 1; }
+  .modal__slug-btn {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    background: #f0f0f0;
+    border: 1px solid #999;
+    border-radius: 4px;
+    white-space: nowrap; }
+    .modal__slug-btn:hover {
+      background: #e0e0e0; }
+  .modal__form input[type="text"], .modal__form input[type="number"], .modal__form select {
+    padding: 0.5rem 0.875rem;
+    font-size: 1.25rem;
+    border: 1px solid #999;
+    border-radius: 4px; }
+  .modal__form-error {
+    font-size: 1.125rem;
+    color: #c00;
+    min-height: 1.5rem; }
+  .modal__options-view[aria-hidden="true"], .modal__options-edit[aria-hidden="true"] {
+    display: none; }
+  .modal__options-checkboxes {
+    margin-bottom: 1rem; }
+  .modal__options-list {
+    list-style: none;
+    margin: 0 0 0.75rem;
+    padding: 0;
+    font-size: 1.25rem; }
+  .modal__options-list li {
+    padding: 0.25rem 0; }
+  .modal__options-list-empty {
+    color: #666;
+    font-style: italic; }
+  .modal__edit-btn {
+    padding: 0.5rem 1rem;
+    font-size: 1.125rem;
+    cursor: pointer;
+    background: #333;
+    color: #fff;
+    border: none;
+    border-radius: 4px; }
+    .modal__edit-btn:hover {
+      background: #555; }
+  .modal__options-edit {
+    margin-top: 0.5rem; }
+  .modal__options-edit-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem; }
+  .modal__option-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center; }
+  .modal__option-input {
+    flex: 1;
+    padding: 0.5rem 0.875rem;
+    font-size: 1.25rem;
+    border: 1px solid #999;
+    border-radius: 4px; }
+  .modal__option-remove {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    background: #f8f0f0;
+    border: 1px solid #c99;
+    border-radius: 4px;
+    color: #a00; }
+    .modal__option-remove:hover {
+      background: #f0e0e0; }
+  .modal__add-option-btn {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    background: #f0f0f0;
+    border: 1px solid #999;
+    border-radius: 4px;
+    margin-bottom: 1rem; }
+    .modal__add-option-btn:hover {
+      background: #e0e0e0; }
   .modal__options {
     display: flex;
     flex-direction: column;
@@ -82,16 +255,19 @@
     align-items: center;
     gap: 0.5rem;
     cursor: pointer;
-    font-size: 1rem; }
+    font-size: 1.25rem; }
     .modal__checkbox input {
-      width: 1.1rem;
-      height: 1.1rem; }
+      width: 1.25rem;
+      height: 1.25rem; }
   .modal__actions {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem; }
+  .modal__actions--view {
+    margin-top: 0.5rem; }
   .modal__save {
     padding: 0.5rem 1rem;
-    font-size: 0.875rem;
+    font-size: 1.125rem;
     cursor: pointer;
     background: #333;
     color: #fff;
@@ -100,8 +276,8 @@
     .modal__save:hover {
       background: #555; }
   .modal__cancel {
-    padding: 0.35rem 0.75rem;
-    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    font-size: 1.125rem;
     cursor: pointer;
     background: transparent;
     border: 1px solid #999;

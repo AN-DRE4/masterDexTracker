@@ -44,6 +44,12 @@ A local Pokemon collection tracker: a grid of squares, each with a persistent ch
    python manage.py migrate
    ```
 
+6. **Seed the Pokémon catalog (Gen 1):**
+   ```bash
+   python manage.py seedpokemon
+   ```
+   This fills the `Pokemon` table from Gen 1 data. Without it, the app falls back to built-in data.
+
 ## Run the app
 
 With the virtual environment **activated**:
@@ -54,9 +60,9 @@ python manage.py runserver
 
 Then open **http://127.0.0.1:8000/** in your browser.
 
-- You’ll see a 10×10 grid of squares.
-- Click a square to open a popup and choose Option 1, 2, or 3.
-- Your choice is saved in SQLite and stays selected after refresh.
+- You’ll see a grid of Pokémon (Gen 1 by default), each with a sprite. Use the **search bar** to fuzzy-search by name (Fuse.js).
+- Click a Pokémon to open a popup and choose one or more options (Option 1, 2, 3). Selections are stored as JSON (`available_options`) in SQLite.
+- Your choices persist after refresh. Data (names, generation, etc.) comes from the database; run `python manage.py seedpokemon` if the grid is empty.
 - SCSS is compiled automatically by django-sass-processor; no extra build step.
 
 ## Project structure
