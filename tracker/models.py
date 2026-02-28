@@ -1,34 +1,33 @@
 from django.db import models
 
 
-class Pokemon(models.Model):
-    """Pokémon catalog: dex number, name, slug for sprites, generation."""
+class DexEntry(models.Model):
+    """A single slot in the Master Dex challenge tracker (box/row/slot in Pokemon Home)."""
 
-    dex = models.PositiveIntegerField(unique=True)
-    name = models.CharField(max_length=64)
-    slug = models.CharField(max_length=64)
-    generation = models.PositiveSmallIntegerField(default=1)
+    SECTION_CHOICES = [
+        ('living_dex', 'Living Dex'),
+        ('gender_forms', 'Gender Variants & Forms'),
+        ('stars', 'Stars'),
+        ('shiny_living_dex', 'Shiny Living Dex'),
+        ('shiny_gender_forms', 'Shiny Gender Variants & Forms'),
+    ]
+
+    box = models.IntegerField()
+    row = models.IntegerField()  # 1-6
+    slot = models.IntegerField()  # 1-5
+    national_dex_number = models.IntegerField()
+    name = models.CharField(max_length=128)
+    image_url = models.URLField(max_length=512, blank=True)
+    games = models.CharField(max_length=256, blank=True)
+    notes = models.TextField(blank=True)
+    caught = models.BooleanField(default=False)
+    section = models.CharField(max_length=32, choices=SECTION_CHOICES)
+    sort_order = models.IntegerField(default=0)
+    star_difficulty = models.CharField(max_length=64, blank=True, null=True)  # for section=stars
 
     class Meta:
-        ordering = ['dex']
+        ordering = ['section', 'sort_order', 'box', 'row', 'slot']
+        verbose_name_plural = 'Dex entries'
 
     def __str__(self):
-        return f"#{self.dex} {self.name}"
-
-
-class SquareChoice(models.Model):
-    """
-    One row per Pokémon (square_id = National Dex number).
-    option_definitions: list of {"id": str, "label": str} for all options this Pokémon can have.
-    available_options: list of option ids that are selected/picked, e.g. ["option_1", "option_3"].
-    """
-
-    square_id = models.PositiveIntegerField(unique=True)  # Pokémon dex number
-    pokemon_name = models.CharField(max_length=64, blank=True)
-    generation = models.PositiveSmallIntegerField(default=1)
-    option_definitions = models.JSONField(default=list)  # [{"id": "option_1", "label": "Shiny"}, ...]
-    available_options = models.JSONField(default=list)  # ["option_1", "option_3"] selected ids
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ['square_id']
+        return f"{self.name} (Box {self.box} R{self.row}S{self.slot})"

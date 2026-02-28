@@ -1,14 +1,9 @@
 from django.contrib import admin
-from .models import Pokemon, SquareChoice
+from .models import DexEntry
 
 
-@admin.register(Pokemon)
-class PokemonAdmin(admin.ModelAdmin):
-    list_display = ('dex', 'name', 'generation')
-    ordering = ('dex',)
-
-
-@admin.register(SquareChoice)
-class SquareChoiceAdmin(admin.ModelAdmin):
-    list_display = ('square_id', 'pokemon_name', 'generation', 'updated_at')
-    ordering = ('square_id',)
+@admin.register(DexEntry)
+class DexEntryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'box', 'row', 'slot', 'section', 'caught', 'national_dex_number')
+    list_filter = ('section', 'caught')
+    search_fields = ('name', 'notes', 'games')
