@@ -2,9 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BoxGrid } from './components/BoxGrid';
+import { CreateEntryModal } from './components/CreateEntryModal';
 import { EntryModal } from './components/EntryModal';
 import { Filters } from './components/Filters';
-import type { DexEntry } from './types';
+import type { DexEntry, SectionKey } from './types';
 import { fetchEntries, patchEntry } from './lib/api';
 
 export default function Home() {
@@ -18,6 +19,8 @@ export default function Home() {
   const [selectedBox, setSelectedBox] = useState(1);
   const [selectedEntry, setSelectedEntry] = useState<DexEntry | null>(null);
   const [editMode, setEditMode] = useState(false);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [createInitial, setCreateInitial] = useState<Partial<DexEntry>>({});
 
   const listParams = useMemo(() => {
     const p: Parameters<typeof fetchEntries>[0] = {};
@@ -97,21 +100,63 @@ export default function Home() {
     [selectedEntry]
   );
 
+  const openCreateBlank = useCallback(() => {
+    const sec = (section || 'living_dex') as SectionKey;
+    setCreateInitial({
+      box: selectedBox,
+      row: 1,
+      slot: 1,
+      section: sec,
+      name: '',
+      national_dex_number: 0,
+    });
+    setCreateOpen(true);
+  }, [section, selectedBox]);
+
+  const handleCreateAdjacent = useCallback((from: DexEntry) => {
+    setSelectedEntry(null);
+    setCreateInitial({
+      box: from.box,
+      row: from.row,
+      slot: from.slot + 1,
+      section: from.section,
+      name: '',
+      national_dex_number: 0,
+      sort_order: from.sort_order,
+    });
+    setCreateOpen(true);
+  }, []);
+
+  const handleEntryCreated = useCallback(() => {
+    void load();
+  }, [load]);
+
   return (
     <main className="min-h-screen p-6 max-w-4xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-6 gap-3 flex-wrap">
         <h1 className="text-2xl font-bold">Master Dex Tracker</h1>
-        <button
-          type="button"
-          onClick={() => setEditMode((prev) => !prev)}
-          className={`px-4 py-2 rounded-lg text-sm font-medium border ${
-            editMode
-              ? 'bg-amber-100 border-amber-400 text-amber-800'
-              : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50'
-          }`}
-        >
-          {editMode ? 'Edit mode on' : 'Edit mode'}
-        </button>
+        <div className="flex items-center gap-2 flex-wrap">
+          {editMode ? (
+            <button
+              type="button"
+              onClick={openCreateBlank}
+              className="px-4 py-2 rounded-lg text-sm font-medium border border-emerald-500 text-emerald-800 bg-emerald-50 hover:bg-emerald-100"
+            >
+              Add a new entry
+            </button>
+          ) : null}
+          <button
+            type="button"
+            onClick={() => setEditMode((prev) => !prev)}
+            className={`px-4 py-2 rounded-lg text-sm font-medium border ${
+              editMode
+                ? 'bg-amber-100 border-amber-400 text-amber-800'
+                : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50'
+            }`}
+          >
+            {editMode ? 'Edit mode on' : 'Edit mode'}
+          </button>
+        </div>
       </div>
       <Filters
         section={section}
@@ -143,6 +188,13 @@ export default function Home() {
         editMode={editMode}
         onClose={() => setSelectedEntry(null)}
         onSave={handleSaveEntry}
+        onCreateAdjacent={editMode ? handleCreateAdjacent : undefined}
+      />
+      <CreateEntryModal
+        open={createOpen}
+        initial={createInitial}
+        onClose={() => setCreateOpen(false)}
+        onCreated={handleEntryCreated}
       />
     </main>
   );

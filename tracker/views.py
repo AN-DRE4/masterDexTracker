@@ -1,12 +1,20 @@
 from django.db.models import Q
 from rest_framework import generics
+from .insert_shift import shift_entries_for_insert
 from .models import DexEntry
 from .serializers import DexEntrySerializer
 
 
-class DexEntryListCreateView(generics.ListAPIView):
+class DexEntryListCreateView(generics.ListCreateAPIView):
     queryset = DexEntry.objects.all()
     serializer_class = DexEntrySerializer
+
+    def perform_create(self, serializer):
+        vd = serializer.validated_data
+        shift_entries_for_insert(
+            vd["section"], vd["box"], vd["row"], vd["slot"]
+        )
+        serializer.save()
 
     def get_queryset(self):
         qs = DexEntry.objects.all()

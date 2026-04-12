@@ -11,6 +11,7 @@ interface EntryModalProps {
   editMode: boolean;
   onClose: () => void;
   onSave: (data: DexEntryUpdate) => Promise<void>;
+  onCreateAdjacent?: (entry: DexEntry) => void;
 }
 
 const SECTION_KEYS: SectionKey[] = [
@@ -21,7 +22,7 @@ const SECTION_KEYS: SectionKey[] = [
   'shiny_gender_forms',
 ];
 
-export function EntryModal({ entry, editMode, onClose, onSave }: EntryModalProps) {
+export function EntryModal({ entry, editMode, onClose, onSave, onCreateAdjacent }: EntryModalProps) {
   const [form, setForm] = useState<DexEntryUpdate>({});
   const [saving, setSaving] = useState(false);
 
@@ -39,6 +40,7 @@ export function EntryModal({ entry, editMode, onClose, onSave }: EntryModalProps
         notes: entry.notes,
         caught: entry.caught,
         section: entry.section,
+        sort_order: entry.sort_order,
         star_difficulty: entry.star_difficulty,
       });
     }
@@ -186,6 +188,17 @@ export function EntryModal({ entry, editMode, onClose, onSave }: EntryModalProps
               </select>
             </label>
             <label className="block">
+              <span className="text-slate-500 block mb-0.5">Sort order</span>
+              <input
+                type="number"
+                value={form.sort_order ?? ''}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, sort_order: parseInt(e.target.value, 10) || 0 }))
+                }
+                className="w-full border border-slate-300 rounded px-2 py-1"
+              />
+            </label>
+            <label className="block">
               <span className="text-slate-500 block mb-0.5">Star / Challenge</span>
               <input
                 type="text"
@@ -205,21 +218,34 @@ export function EntryModal({ entry, editMode, onClose, onSave }: EntryModalProps
               />
               <span className="text-slate-600">Caught</span>
             </label>
-            <div className="flex gap-2 pt-2">
-              <button
-                type="submit"
-                disabled={saving}
-                className="px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 disabled:opacity-50"
-              >
-                {saving ? 'Saving…' : 'Save'}
-              </button>
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 border border-slate-300 rounded-lg font-medium hover:bg-slate-50"
-              >
-                Cancel
-              </button>
+            <div className="flex flex-col gap-2 pt-2">
+              {onCreateAdjacent ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onCreateAdjacent(entry);
+                  }}
+                  className="w-full px-4 py-2 bg-sky-600 text-white rounded-lg font-medium hover:bg-sky-700 text-sm"
+                >
+                  Add Pokémon to the right (next slot)
+                </button>
+              ) : null}
+              <div className="flex gap-2">
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 disabled:opacity-50"
+                >
+                  {saving ? 'Saving…' : 'Save'}
+                </button>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-4 py-2 border border-slate-300 rounded-lg font-medium hover:bg-slate-50"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </form>
         </div>
