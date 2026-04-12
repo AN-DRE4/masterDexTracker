@@ -17,6 +17,7 @@ class DexEntry(models.Model):
     slot = models.IntegerField()  # 1-5
     national_dex_number = models.IntegerField()
     name = models.CharField(max_length=128)
+    bulbapedia_url = models.URLField(max_length=512, blank=True)
     image_url = models.URLField(max_length=512, blank=True)
     games = models.CharField(max_length=256, blank=True)
     notes = models.TextField(blank=True)

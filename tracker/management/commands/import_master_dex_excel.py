@@ -7,6 +7,7 @@ import re
 from django.core.management.base import BaseCommand
 from openpyxl import load_workbook
 from tracker.models import DexEntry
+from tracker.bulbapedia_urls import bulbapedia_species_url
 
 
 SHEET_NAME = 'template - master dex challenge'
@@ -100,12 +101,14 @@ def import_sheet(ws, stdout):
         games = (_cell_value(ws, row, COL_GAMES) or '').strip()
         notes = (_cell_value(ws, row, COL_NOTES) or '').strip()
         caught = _parse_bool(_cell_value(ws, row, COL_CAUGHT))
+        bulbapedia_url = (bulbapedia_species_url(name) or '')[:512]
         # Idempotent: match by (box, row, slot, section)
         entry, was_created = DexEntry.objects.update_or_create(
             box=box, row=r, slot=slot, section=current_section,
             defaults={
                 'national_dex_number': national,
                 'name': name,
+                'bulbapedia_url': bulbapedia_url,
                 'image_url': image_url[:512] if image_url else '',
                 'games': games[:256] if games else '',
                 'notes': notes,

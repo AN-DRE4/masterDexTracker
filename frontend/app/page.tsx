@@ -17,6 +17,7 @@ export default function Home() {
   const [game, setGame] = useState('');
   const [selectedBox, setSelectedBox] = useState(1);
   const [selectedEntry, setSelectedEntry] = useState<DexEntry | null>(null);
+  const [editMode, setEditMode] = useState(false);
 
   const listParams = useMemo(() => {
     const p: Parameters<typeof fetchEntries>[0] = {};
@@ -80,9 +81,38 @@ export default function Home() {
     []
   );
 
+  const handleSaveEntry = useCallback(
+    async (payload: Parameters<typeof patchEntry>[1]) => {
+      if (!selectedEntry) return;
+      try {
+        const updated = await patchEntry(selectedEntry.id, payload);
+        setEntries((prev) =>
+          prev.map((e) => (e.id === updated.id ? updated : e))
+        );
+        setSelectedEntry(null);
+      } catch {
+        setError('Failed to update entry');
+      }
+    },
+    [selectedEntry]
+  );
+
   return (
     <main className="min-h-screen p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Master Dex Tracker</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">Master Dex Tracker</h1>
+        <button
+          type="button"
+          onClick={() => setEditMode((prev) => !prev)}
+          className={`px-4 py-2 rounded-lg text-sm font-medium border ${
+            editMode
+              ? 'bg-amber-100 border-amber-400 text-amber-800'
+              : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50'
+          }`}
+        >
+          {editMode ? 'Edit mode on' : 'Edit mode'}
+        </button>
+      </div>
       <Filters
         section={section}
         caughtFilter={caughtFilter}
@@ -108,7 +138,12 @@ export default function Home() {
           onToggleCaught={handleToggleCaught}
         />
       )}
-      <EntryModal entry={selectedEntry} onClose={() => setSelectedEntry(null)} />
+      <EntryModal
+        entry={selectedEntry}
+        editMode={editMode}
+        onClose={() => setSelectedEntry(null)}
+        onSave={handleSaveEntry}
+      />
     </main>
   );
 }

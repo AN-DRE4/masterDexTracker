@@ -1,6 +1,7 @@
 """Create sample DexEntry rows for testing when Excel import is not available."""
 from django.core.management.base import BaseCommand
 from tracker.models import DexEntry
+from tracker.bulbapedia_urls import bulbapedia_species_url
 
 
 class Command(BaseCommand):
@@ -16,9 +17,10 @@ class Command(BaseCommand):
              'image_url': 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/3.png', 'games': 'Red, Blue', 'notes': '', 'sort_order': 3},
         ]
         for i, d in enumerate(samples):
+            defaults = {**d, 'caught': False, 'bulbapedia_url': (bulbapedia_species_url(d['name']) or '')[:512]}
             _, created = DexEntry.objects.get_or_create(
                 box=d['box'], row=d['row'], slot=d['slot'], section=d['section'],
-                defaults={**d, 'caught': False}
+                defaults=defaults,
             )
             if created:
                 self.stdout.write(f"Created {d['name']}")

@@ -171,3 +171,13 @@ cython_debug/
 /frontend/tsconfig.node.json
 /frontend/tsconfig.app.json
 /frontend/tsconfig.base.json
+
+*.csv
+*.xlsx
+*.xls
+*.xlsm
+*.xlsb
+*.xlsm
+*.xlsb
+*.xlsm
+*.xlsb

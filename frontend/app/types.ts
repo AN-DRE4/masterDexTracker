@@ -12,6 +12,7 @@ export interface DexEntry {
   slot: number;
   national_dex_number: number;
   name: string;
+  bulbapedia_url: string;
   image_url: string;
   games: string;
   notes: string;

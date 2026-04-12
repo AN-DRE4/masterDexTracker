@@ -7,12 +7,7 @@ class DexEntrySerializer(serializers.ModelSerializer):
         model = DexEntry
         fields = [
             'id', 'box', 'row', 'slot', 'national_dex_number', 'name',
-            'image_url', 'games', 'notes', 'caught', 'section', 'sort_order',
-            'star_difficulty',
+            'bulbapedia_url', 'image_url', 'games', 'notes', 'caught', 'section',
+            'sort_order', 'star_difficulty',
         ]
-        read_only_fields = [
-            'id', 'box', 'row', 'slot', 'national_dex_number', 'name',
-            'image_url', 'games', 'section', 'sort_order',
-            'star_difficulty',
-        ]
-        # caught and notes are writable via PATCH
+        read_only_fields = ['id']
