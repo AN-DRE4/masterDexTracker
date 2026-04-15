@@ -8,6 +8,7 @@ from django.core.management.base import BaseCommand
 from openpyxl import load_workbook
 from tracker.models import DexEntry
 from tracker.bulbapedia_urls import bulbapedia_species_url
+from tracker.db_snapshots import create_snapshot
 
 
 SHEET_NAME = 'template - master dex challenge'
@@ -153,5 +154,7 @@ class Command(BaseCommand):
         if dry_run:
             self.stdout.write(f'[DRY RUN] Would import from sheet "{sheet.title}", max_row={sheet.max_row}')
             return
+        snapshot = create_snapshot(label="before_import")
+        self.stdout.write(f"Snapshot created: {snapshot}")
         created, updated = import_sheet(sheet, self.stdout)
         self.stdout.write(self.style.SUCCESS(f'Created {created}, updated {updated} entries.'))

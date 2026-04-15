@@ -2,12 +2,15 @@
 from django.core.management.base import BaseCommand
 from tracker.models import DexEntry
 from tracker.bulbapedia_urls import bulbapedia_species_url
+from tracker.db_snapshots import create_snapshot
 
 
 class Command(BaseCommand):
     help = 'Create sample dex entries for testing'
 
     def handle(self, *args, **options):
+        snapshot = create_snapshot(label="before_seed")
+        self.stdout.write(f"Snapshot created: {snapshot}")
         samples = [
             {'box': 1, 'row': 1, 'slot': 1, 'national_dex_number': 1, 'name': 'Bulbasaur', 'section': 'living_dex',
              'image_url': 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png', 'games': 'Red, Blue', 'notes': 'Starter.', 'sort_order': 1},
