@@ -12,7 +12,11 @@ class DexEntryListCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         vd = serializer.validated_data
         shift_entries_for_insert(
-            vd["section"], vd["box"], vd["row"], vd["slot"]
+            vd["section"],
+            vd["box"],
+            vd["row"],
+            vd["slot"],
+            vd.get("star_difficulty"),
         )
         serializer.save()
 

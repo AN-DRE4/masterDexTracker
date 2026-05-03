@@ -182,3 +182,5 @@ cython_debug/
 *.xlsm
 *.xlsb
 backups/db/
+
+db.sqlite3-*
